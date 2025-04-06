@@ -11,54 +11,68 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(uuid())
-  name        String
-  email       String        @unique
-  password    String
-  role        Role          @default(STUDENT)
-  courses     Course[]      @relation("CourseCreator")
-  enrollments Enrollment[]
+  id              String           @id @default(uuid())
+  name            String
+  email           String           @unique
+  password        String
+  role            Role             @default(STUDENT)
+  course          Course[]         @relation("CourseCreator")
+  enrollments     Enrollment[]
+  lessonProgress  LessonProgress[]
 }
 
 model Course {
-  id          String        @id @default(uuid())
-  title       String
-  description String
-  thumbnail   String
-  isPublished Boolean       @default(false)
-  createdBy   String
-  creator     User          @relation("CourseCreator", fields: [createdBy], references: [id])
-  modules     Module[]
-  enrollments Enrollment[]
+  id              String       @id @default(uuid())
+  title           String
+  description     String
+  thumbnail       String
+  isPublished     Boolean      @default(false)
+  createdBy       String
+  creator         User         @relation("CourseCreator", fields: [createdBy], references: [id])
+  modules         Module[]
+  enrollments     Enrollment[]
 }
 
 model Module {
-  id          String        @id @default(uuid())
-  title       String
-  content     String
-  order       Int
-  course      Course        @relation(fields: [courseId], references: [id])
-  courseId    String
-  lessons     Lesson[]
+  id              String   @id @default(uuid())
+  title           String
+  content         String
+  order           Int
+  course          Course   @relation(fields: [courseId], references: [id])
+  courseId        String
+  lessons         Lesson[]
 }
 
 model Lesson {
-  id          String        @id @default(uuid())
-  title       String
-  content     String
-  videoUrl    String?
-  order       Int
-  module      Module        @relation(fields: [moduleId], references: [id])
-  moduleId    String
+  id              String           @id @default(uuid())
+  title           String
+  content         String
+  videoUrl        String?
+  order           Int
+  module          Module           @relation(fields: [moduleId], references: [id])
+  moduleId        String
+  lessonProgress  LessonProgress[]
 }
 
 model Enrollment {
-  id          String        @id @default(uuid())
-  User        User          @relation(fields: [userId], references: [id])
-  userId      String
-  course      Course        @relation(fields: [courseId], references: [id])
-  courseId    String
-  enrolledAt  DateTime      @default(now())
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String
+  course          Course   @relation(fields: [courseId], references: [id])
+  courseId        String
+  enrolledAt      DateTime @default(now())
+}
+
+model LessonProgress {
+  id              String   @id @default(uuid())
+  userId          String
+  lessonId        String
+  completedAt     DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id])
+  lesson          Lesson   @relation(fields: [lessonId], references: [id])
+
+  @@unique([userId, lessonId])
+  @@index([userId, lessonId])
 }
 
 enum Role {

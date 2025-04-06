@@ -54,7 +54,7 @@ export const getEnrollmentsByUser = async (userId: string) => {
 export const getAllEnrollments = async () => {
   const enrollments = await prisma.enrollment.findMany({
     include: {
-      User: {
+      user: {
         select: {
           id: true,
           name: true,
@@ -84,7 +84,7 @@ export const getEnrollmentByCourseId = async (courseId: string) => {
       courseId,
     },
     include: {
-      User: {
+      user: {
         select: {
           id: true,
           name: true,

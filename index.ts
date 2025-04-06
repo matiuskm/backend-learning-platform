@@ -7,6 +7,7 @@ import courseRouter from './src/routes/course.route';
 import moduleRouter from './src/routes/module.route';
 import lessonRouter from './src/routes/lesson.route';
 import enrollementRouter from './src/routes/enrollment.route';
+import lessonProgressRouter from './src/routes/lessonProgress.route';
 
 dotenv.config()
 const app = express()
@@ -20,6 +21,7 @@ app.use('/courses', courseRouter)
 app.use('/modules', moduleRouter);
 app.use('/lessons', lessonRouter);
 app.use('/enroll', enrollementRouter);
+app.use('/progress', lessonProgressRouter);
 
 app.get('/', (_, res) => {
     res.send('Learning Platform API 🚀')
