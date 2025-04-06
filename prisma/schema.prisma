@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(uuid())
+  name        String
+  email       String        @unique
+  password    String
+  role        Role          @default(STUDENT)
+  courses     Course[]      @relation("CourseCreator")
+  enrollments Enrollment[]
+}
+
+model Course {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  thumbnail   String
+  isPublished Boolean       @default(false)
+  createdBy   String
+  creator     User          @relation("CourseCreator", fields: [createdBy], references: [id])
+  modules     Module[]
+  enrollments Enrollment[]
+}
+
+model Module {
+  id          String        @id @default(uuid())
+  title       String
+  content     String
+  order       Int
+  course      Course        @relation(fields: [courseId], references: [id])
+  courseId    String
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          String        @id @default(uuid())
+  title       String
+  content     String
+  videoUrl    String?
+  order       Int
+  module      Module        @relation(fields: [moduleId], references: [id])
+  moduleId    String
+}
+
+model Enrollment {
+  id          String        @id @default(uuid())
+  User        User          @relation(fields: [userId], references: [id])
+  userId      String
+  course      Course        @relation(fields: [courseId], references: [id])
+  courseId    String
+  enrolledAt  DateTime      @default(now())
+}
+
+enum Role {
+  ADMIN
+  CREATOR
+  STUDENT
+}
